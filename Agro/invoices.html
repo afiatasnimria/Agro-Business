@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Agro Management — Invoices</title>
+  <style>
+    /* ----- Base ----- */
+    :root{
+      --green-700:#1b5e20; --green-600:#2e7d32; --green-400:#66bb6a; --muted:#6b7280;
+      --card-bg:#ffffff; --bg:#f5f9f6; --accent:#2e7d32;
+      --radius:12px; --glass: rgba(255,255,255,0.6);
+      font-family: Inter, Poppins, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#0f172a;min-height:100vh}
+
+    /* ----- Layout ----- */
+    .app{display:flex;min-height:100vh}
+    .sidebar{width:260px;background:linear-gradient(180deg,var(--green-700),var(--green-600));color:#fff;padding:28px 18px;display:flex;flex-direction:column}
+    .brand{font-weight:700;font-size:20px;letter-spacing:0.4px;margin-bottom:18px}
+    .nav{display:flex;flex-direction:column;gap:6px}
+    .nav a, .nav button{background:transparent;border:0;color:inherit;text-align:left;padding:12px;border-radius:10px;cursor:pointer;font-size:15px;text-decoration:none;display:block}
+    .nav a:hover, .nav button:hover{background:rgba(255,255,255,0.06)}
+    .nav a.active, .nav button.active{background:rgba(255,255,255,0.12)}
+    .logout-btn{color:#ff6b6b}
+    .logout-btn:hover{background:rgba(255,99,71,0.1); color:#ff4757}
+    .sidebar .spacer{flex:1}
+    .sidebar small{opacity:0.9}
+
+    .main{flex:1;padding:28px}
+    header.main-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .search{display:flex;gap:12px;align-items:center}
+    .search input{padding:10px 12px;border-radius:10px;border:1px solid #e6f0ea;background:white;min-width:300px}
+    .btn{background:var(--accent);color:white;padding:10px 16px;border-radius:10px;border:0;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--green-700);border:1px solid rgba(16,185,129,0.12)}
+
+    /* ----- Cards & grid ----- */
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .card{background:var(--card-bg);padding:18px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(12,17,15,0.06)}
+
+    /* ----- Tables ----- */
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px 10px;text-align:left;border-bottom:1px solid #eef3ee}
+    th{font-size:13px;color:var(--muted)}
+
+    /* ----- Forms ----- */
+    .form-row{display:flex;gap:12px}
+    .field{flex:1}
+    .field label{display:block;margin-bottom:4px;font-size:14px;color:var(--muted)}
+    .field input, .field select{width:100%;padding:10px;border-radius:8px;border:1px solid #e6f0ea}
+
+    /* ----- Modals ----- */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:1000}
+    .modal{background:white;padding:24px;border-radius:12px;max-width:600px;width:90%;box-shadow:0 20px 40px rgba(0,0,0,0.2)}
+    .modal h3{margin-top:0}
+    .modal .form-row{margin-top:12px}
+    .modal button{margin-top:12px}
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">Agro Management</div>
+
+      <nav class="nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="products.html">Products</a>
+        <a href="customers.html">Customers</a>
+        <a href="invoices.html" class="active">Invoices</a>
+        <a href="stock.html">Stock</a>
+        <a href="reports.html">Reports</a>
+        <a href="expenses.html">Expenses</a>
+        <a href="settings.html">Settings</a>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </nav>
+
+      <div class="spacer"></div>
+      <small>Logged in as <strong>Owner</strong></small>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <header class="main-header">
+        <div>
+          <h1 style="margin:0;font-size:20px">Invoices</h1>
+          <div class="small muted">Create and manage invoices</div>
+        </div>
+        <div class="top-actions">
+          <input placeholder="Search invoices..." id="globalSearch" />
+          <button class="btn" id="createInvoiceBtn">+ Create Invoice</button>
+        </div>
+      </header>
+
+      <!-- INVOICES PAGE -->
+      <div class="card">
+        <table id="invoicesTable"><thead><tr><th>No</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th></tr></thead><tbody></tbody></table>
+      </div>
+
+      <!-- INVOICE MODAL -->
+      <div id="invoiceModal" class="modal-overlay" style="display:none">
+        <div class="modal">
+          <h3>Create Invoice</h3>
+          <div class="form-row">
+            <div class="field"><label>Customer</label><input id="inv_customer"/></div>
+          </div>
+          <div id="invItems"></div>
+          <button class="btn ghost" id="addInvItem">+ Add Item</button>
+          <div style="margin-top:12px;text-align:right"><strong>Total: ৳ <span id="invTotal">0.00</span></strong></div>
+          <button class="btn" id="saveInvoice">Save Invoice</button>
+          <button class="btn ghost" id="cancelInvoice">Cancel</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+// ===== Demo data =====
+const demoProducts = [
+  {sku:'PST-001', name:'Alpha Insecticide 250ml', category:'Pesticide', stock:50, price:150},
+  {sku:'FRT-001', name:'GrowFast 2kg', category:'Fertilizer', stock:30, price:500},
+  {sku:'SD-001', name:'Hybrid Maize Pack', category:'Seeds', stock:200, price:120}
+];
+const demoInvoices = [{no:'INV-2025-0001', customer:'M. Rahman', date:'2025-11-28', total:270, status:'paid'}];
+const demoStockLogs = [{product:'Alpha Insecticide 250ml', change:-1, reason:'sale', date:'2025-11-28'}];
+
+// ===== Helpers =====
+function $(s){return document.querySelector(s)}
+function $all(s){return Array.from(document.querySelectorAll(s))}
+
+// ===== Render functions =====
+function renderInvoices(){
+  const tbody = $('#invoicesTable tbody'); tbody.innerHTML='';
+  demoInvoices.forEach(inv=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${inv.no}</td><td>${inv.customer}</td><td>${inv.date}</td><td>৳ ${inv.total}</td><td>${inv.status}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ===== Init render =====
+renderInvoices();
+
+// ===== Create invoice =====
+$('#createInvoiceBtn').addEventListener('click',()=>{ $('#invoiceModal').style.display='flex'; $('#invItems').innerHTML=''; invItems=[]; updateInvTotal(); });
+$('#cancelInvoice').addEventListener('click',()=>{ $('#invoiceModal').style.display='none'; });
+
+let invItems=[];
+function addInvItem(){
+  const idx = invItems.length; invItems.push({sku:'',name:'',qty:1,price:0}); renderInvItems();
+}
+function renderInvItems(){
+  const wrap = $('#invItems'); wrap.innerHTML='';
+  invItems.forEach((it,i)=>{
+    const row = document.createElement('div'); row.style.display='flex'; row.style.gap='8px'; row.style.marginTop='8px';
+    row.innerHTML = `<input placeholder="SKU" value="${it.sku}" data-i="${i}" class="inv-sku" style="padding:8px;border-radius:8px;border:1px solid #e6f0ea;flex:1" />
+    <input placeholder="Name" value="${it.name}" data-i="${i}" class="inv-name" style="padding:8px;border-radius:8px;border:1px solid #e6f0ea;flex:2" />
+    <input type="number" value="${it.qty}" data-i="${i}" class="inv-qty" style="width:80px;padding:8px;border-radius:8px;border:1px solid #e6f0ea" />
+    <input type="number" value="${it.price}" data-i="${i}" class="inv-price" style="width:110px;padding:8px;border-radius:8px;border:1px solid #e6f0ea" />
+    <button data-i="${i}" class="btn ghost inv-remove">Remove</button>`;
+    wrap.appendChild(row);
+  });
+  // attach listeners
+  $all('.inv-sku').forEach(el=>el.addEventListener('input',e=>{invItems[e.target.dataset.i].sku=e.target.value}));
+  $all('.inv-name').forEach(el=>el.addEventListener('input',e=>{invItems[e.target.dataset.i].name=e.target.value}));
+  $all('.inv-qty').forEach(el=>el.addEventListener('input',e=>{invItems[e.target.dataset.i].qty=Number(e.target.value); updateInvTotal();}));
+  $all('.inv-price').forEach(el=>el.addEventListener('input',e=>{invItems[e.target.dataset.i].price=Number(e.target.value); updateInvTotal();}));
+  $all('.inv-remove').forEach(el=>el.addEventListener('click',e=>{invItems.splice(e.target.dataset.i,1); renderInvItems(); updateInvTotal();}));
+  updateInvTotal();
+}
+function updateInvTotal(){
+  const total = invItems.reduce((s,it)=>s + (Number(it.price)||0)*(Number(it.qty)||0),0);
+  $('#invTotal').textContent = total.toFixed(2);
+}
+
+$('#addInvItem').addEventListener('click',()=>{ addInvItem(); });
+$('#saveInvoice').addEventListener('click',()=>{
+  const customer = $('#inv_customer').value.trim()||'Walk-in';
+  const no = 'INV-'+(Date.now()).toString().slice(-6);
+  const date = new Date().toISOString().slice(0,10);
+  const total = Number($('#invTotal').textContent)||0;
+  demoInvoices.unshift({no,customer,date,total,status: total>0 ? 'due' : 'paid'});
+  // reduce stock
+  invItems.forEach(it=>{
+    const prod = demoProducts.find(p=>p.sku===it.sku || p.name===it.name);
+    if(prod){ prod.stock -= Number(it.qty)||1; demoStockLogs.unshift({product:prod.name, change:-(Number(it.qty)||1), reason:'sale', date}); }
+  });
+  renderInvoices(); $('#invoiceModal').style.display='none';
+});
+
+// global search (very simple)
+$('#globalSearch').addEventListener('input',e=>{
+  const q = e.target.value.toLowerCase(); if(!q) return; const found = demoInvoices.find(inv=>inv.no.toLowerCase().includes(q) || inv.customer.toLowerCase().includes(q)); if(found){ alert('Found invoice: '+found.no) }
+});
+
+// ===== Logout =====
+$('#logoutBtn').addEventListener('click',()=>{
+  window.location.href = 'landing.html';
+});
+  </script>
+</body>
+</html>

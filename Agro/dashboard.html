@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Agro Management — Demo (Style 1)</title>
+  <style>
+    /* ----- Base ----- */
+    :root{
+      --green-700:#1b5e20; --green-600:#2e7d32; --green-400:#66bb6a; --muted:#6b7280;
+      --card-bg:#ffffff; --bg:#f5f9f6; --accent:#2e7d32;
+      --radius:12px; --glass: rgba(255,255,255,0.6);
+      font-family: Inter, Poppins, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#0f172a;min-height:100vh}
+
+    /* ----- Layout ----- */
+    .app{display:flex;min-height:100vh}
+    .sidebar{width:260px;background:linear-gradient(180deg,var(--green-700),var(--green-600));color:#fff;padding:28px 18px;display:flex;flex-direction:column}
+    .brand{font-weight:700;font-size:20px;letter-spacing:0.4px;margin-bottom:18px}
+    .nav{display:flex;flex-direction:column;gap:6px}
+    .nav a, .nav button{background:transparent;border:0;color:inherit;text-align:left;padding:12px;border-radius:10px;cursor:pointer;font-size:15px;text-decoration:none;display:block}
+    .nav a:hover, .nav button:hover{background:rgba(255,255,255,0.06)}
+    .nav a.active, .nav button.active{background:rgba(255,255,255,0.12)}
+    .logout-btn{color:#ff6b6b}
+    .logout-btn:hover{background:rgba(255,99,71,0.1); color:#ff4757}
+    .sidebar .spacer{flex:1}
+    .sidebar small{opacity:0.9}
+
+    .main{flex:1;padding:28px}
+    header.main-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .search{display:flex;gap:12px;align-items:center}
+    .search input{padding:10px 12px;border-radius:10px;border:1px solid #e6f0ea;background:white;min-width:300px}
+    .btn{background:var(--accent);color:white;padding:10px 16px;border-radius:10px;border:0;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--green-700);border:1px solid rgba(16,185,129,0.12)}
+
+    /* ----- Cards & grid ----- */
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .card{background:var(--card-bg);padding:18px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(12,17,15,0.06)}
+
+    /* ----- Dashboard tiles ----- */
+    .tile{display:flex;flex-direction:column;gap:8px}
+    .tile .num{font-size:20px;font-weight:700}
+    .tile .muted{color:var(--muted);font-size:13px}
+
+    /* ----- Tables ----- */
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px 10px;text-align:left;border-bottom:1px solid #eef3ee}
+    th{font-size:13px;color:var(--muted)}
+
+    /* ----- Forms ----- */
+    .form-row{display:flex;gap:12px}
+    .form-row .field{flex:1}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #e6f0ea}
+
+    /* ----- Responsive ----- */
+    @media (max-width:880px){.sidebar{display:none}.main{padding:18px}}
+
+    /* ----- Page sections (SINGLE PAGE APP) ----- */
+    .page{display:none}
+    .page.active{display:block}
+
+    /* ----- Login overlay ----- */
+    .login-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:60}
+    .login-card{width:380px;background:white;padding:26px;border-radius:14px;box-shadow:0 20px 50px rgba(2,6,23,0.2)}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* subtle micro styles */
+    .muted{color:var(--muted)}
+    .top-actions{display:flex;gap:10px;align-items:center}
+    .badge{background:var(--green-400);color:#fff;padding:6px 10px;border-radius:999px;font-weight:700}
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">Agro Management</div>
+
+    <nav class="nav">
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="products.html">Products</a>
+      <a href="customers.html">Customers</a>
+      <a href="invoices.html">Invoices</a>
+      <a href="stock.html">Stock</a>
+      <a href="reports.html">Reports</a>
+      <a href="expenses.html">Expenses</a>
+      <a href="settings.html">Settings</a>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </nav>
+
+    <div class="spacer"></div>
+    <small>Logged in as <strong>Owner</strong></small>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="main-header">
+      <div>
+        <h1 style="margin:0;font-size:20px">Dashboard</h1>
+        <div class="small muted">Welcome back — here's what's happening</div>
+      </div>
+      <div class="top-actions">
+        <input placeholder="Search products, invoices, customers..." id="globalSearch" />
+      </div>
+    </header>
+
+    <!-- PAGES -->
+    <section id="dashboard" class="page active">
+      <div class="grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="card tile"><div class="muted">Total Sales (YTD)</div><div class="num">৳ <span id="totalSales">50,000</span></div></div>
+        <div class="card tile"><div class="muted">Due Amount</div><div class="num">৳ <span id="dueAmount">12,500</span></div></div>
+        <div class="card tile"><div class="muted">Products</div><div class="num"><span id="productCount">12</span></div></div>
+        <div class="card tile"><div class="muted">Low Stock</div><div class="num"><span id="lowStockCount">4</span></div></div>
+      </div>
+
+      <div style="margin-top:18px" class="card">
+        <h3 style="margin:0 0 8px">Recent Invoices</h3>
+        <table id="recentInvoicesTable"><thead><tr><th>Invoice</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th></tr></thead><tbody></tbody></table>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<script>
+// ===== Demo data =====
+const demoProducts = [
+  {sku:'PST-001', name:'Alpha Insecticide 250ml', category:'Pesticide', stock:50, price:150},
+  {sku:'FRT-001', name:'GrowFast 2kg', category:'Fertilizer', stock:30, price:500},
+  {sku:'SD-001', name:'Hybrid Maize Pack', category:'Seeds', stock:200, price:120}
+];
+const demoCustomers = [{name:'M. Rahman', phone:'01710000000', type:'retail'},{name:'Green Farm Ltd.', phone:'01820000000', type:'wholesale'}];
+const demoInvoices = [{no:'INV-2025-0001', customer:'M. Rahman', date:'2025-11-28', total:270, status:'paid'}];
+const demoStockLogs = [{product:'Alpha Insecticide 250ml', change:-1, reason:'sale', date:'2025-11-28'}];
+const demoExpenses = [{title:'Electricity', category:'Utilities', amount:1200, date:'2025-11-01'}];
+
+// ===== Helpers =====
+function $(s){return document.querySelector(s)}
+function $all(s){return Array.from(document.querySelectorAll(s))}
+
+// ===== Render functions =====
+function renderProducts(){
+  const tbody = $('#productsTable tbody'); tbody.innerHTML='';
+  demoProducts.forEach((p,idx)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${p.sku}</td><td>${p.name}</td><td>${p.category}</td><td>${p.stock}</td><td>৳ ${p.price}</td><td><button data-idx="${idx}" class="btn ghost">Edit</button></td>`;
+    tbody.appendChild(tr);
+  });
+  $('#productCount').textContent = demoProducts.length;
+}
+function renderCustomers(){
+  const tbody = $('#customersTable tbody'); tbody.innerHTML='';
+  demoCustomers.forEach((c,idx)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${c.name}</td><td>${c.phone||'-'}</td><td>${c.type}</td><td><button data-idx="${idx}" class="btn ghost">View</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+function renderInvoices(){
+  const tbody = $('#invoicesTable tbody'); tbody.innerHTML='';
+  demoInvoices.forEach(inv=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${inv.no}</td><td>${inv.customer}</td><td>${inv.date}</td><td>৳ ${inv.total}</td><td>${inv.status}</td>`;
+    tbody.appendChild(tr);
+  });
+  const rtb = $('#recentInvoicesTable tbody'); rtb.innerHTML='';
+  demoInvoices.slice(0,6).forEach(inv=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${inv.no}</td><td>${inv.customer}</td><td>${inv.date}</td><td>৳ ${inv.total}</td><td>${inv.status}</td>`; rtb.appendChild(tr); });
+}
+function renderStock(){
+  const tbody = $('#stockTable tbody'); tbody.innerHTML='';
+  demoStockLogs.forEach(s=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${s.product}</td><td>${s.change}</td><td>${s.reason}</td><td>${s.date}</td>`; tbody.appendChild(tr); })
+}
+function renderExpenses(){
+  const tbody = $('#expensesTable tbody'); tbody.innerHTML='';
+  demoExpenses.forEach(e=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${e.title}</td><td>${e.category}</td><td>৳ ${e.amount}</td><td>${e.date}</td>`; tbody.appendChild(tr); })
+}
+
+// ===== Init render =====
+renderProducts(); renderCustomers(); renderInvoices(); renderStock(); renderExpenses();
+
+// ===== Login overlay =====
+$('#openLogin').addEventListener('click',()=>{ $('#loginOverlay').style.display='flex'; });
+$('#closeLogin').addEventListener('click',()=>{ $('#loginOverlay').style.display='none'; });
+$('#doLogin').addEventListener('click',()=>{
+  const e = $('#loginEmail').value.trim();
+  alert('Logged in as '+(e||'demo user')+' (demo)');
+  $('#loginOverlay').style.display='none';
+});
+
+// ===== Product modal =====
+$('#addProductBtn').addEventListener('click',()=>{ $('#productModal').style.display='flex'; });
+$('#cancelProduct').addEventListener('click',()=>{ $('#productModal').style.display='none'; });
+$('#saveProduct').addEventListener('click',()=>{
+  const sku = $('#p_sku').value.trim(); const name = $('#p_name').value.trim();
+  const category = $('#p_category').value.trim(); const unit = $('#p_unit').value; const stock = Number($('#p_stock').value)||0; const price = Number($('#p_price').value)||0;
+  if(!sku||!name){alert('SKU and name required');return}
+  demoProducts.push({sku,name,category,unit,stock,price}); renderProducts(); $('#productModal').style.display='none';
+  // clear
+  $('#p_sku').value=''; $('#p_name').value=''; $('#p_category').value=''; $('#p_stock').value=''; $('#p_price').value='';
+});
+
+// ===== Create invoice =====
+$('#createInvoiceBtn').addEventListener('click',()=>{ $('#invoiceModal').style.display='flex'; $('#invItems').innerHTML=''; invItems=[]; updateInvTotal(); });
+$('#cancelInvoice').addEventListener('click',()=>{ $('#invoiceModal').style.display='none'; });
+
+let invItems=[];
+function addInvItem(){
+  const idx = invItems.length; invItems.push({sku:'',name:'',qty:1,price:0}); renderInvItems();
+}
+function renderInvItems(){
+  const wrap = $('#invItems'); wrap.innerHTML='';
+  invItems.forEach((it,i)=>{
+    const row = document.createElement('div'); row.style.display='flex'; row.style.gap='8px';
+    row.innerHTML = `<input placeholder="SKU" value="${it.sku}" data-i="${i}" class="inv-sku" style="padding:8px;border-radius:8px;border:1px solid #e6f0ea;flex:1" />
+    <input placeholder="Name" value="${it.name}" data-i="${i}" class="inv-name" style="padding:8px;border-radius:8px;border:1px solid #e6f0ea;flex:2" />
+    <input type="number" value="${it.qty}" data-i="${i}" class="inv-qty" style="width:80px;padding:8px;border-radius:8px;border:1px solid #e6f0ea" />
+    <input type="number" value="${it.price}" data-i="${i}" class="inv-price" style="width:110px;padding:8px;border-radius:8px;border:1px solid #e6f0ea" />
+    <button data-i="${i}" class="btn ghost inv-remove">Remove</button>`;
+    wrap.appendChild(row);
+  });
+  // attach listeners
+  $all('.inv-sku').forEach(el=>el.addEventListener('input',e=>{invItems[e.target.dataset.i].sku=e.target.value}));
+  $all('.inv-name').forEach(el=>el.addEventListener('input',e=>{invItems[e.target.dataset.i].name=e.target.value}));
+  $all('.inv-qty').forEach(el=>el.addEventListener('input',e=>{invItems[e.target.dataset.i].qty=Number(e.target.value); updateInvTotal();}));
+  $all('.inv-price').forEach(el=>el.addEventListener('input',e=>{invItems[e.target.dataset.i].price=Number(e.target.value); updateInvTotal();}));
+  $all('.inv-remove').forEach(el=>el.addEventListener('click',e=>{invItems.splice(e.target.dataset.i,1); renderInvItems(); updateInvTotal();}));
+  updateInvTotal();
+}
+function updateInvTotal(){
+  const total = invItems.reduce((s,it)=>s + (Number(it.price)||0)*(Number(it.qty)||0),0);
+  $('#invTotal').textContent = total.toFixed(2);
+}
+$('#addInvItem').addEventListener('click',()=>{ addInvItem(); });
+$('#saveInvoice').addEventListener('click',()=>{
+  const customer = $('#inv_customer').value.trim()||'Walk-in';
+  const no = 'INV-'+(Date.now()).toString().slice(-6);
+  const date = new Date().toISOString().slice(0,10);
+  const total = Number($('#invTotal').textContent)||0;
+  demoInvoices.unshift({no,customer,date,total,status: total>0 ? 'due' : 'paid'});
+  // reduce stock
+  invItems.forEach(it=>{
+    const prod = demoProducts.find(p=>p.sku===it.sku || p.name===it.name);
+    if(prod){ prod.stock -= Number(it.qty)||1; demoStockLogs.unshift({product:prod.name, change:-(Number(it.qty)||1), reason:'sale', date}); }
+  });
+  renderProducts(); renderInvoices(); renderStock(); $('#invoiceModal').style.display='none';
+});
+
+// save settings
+$('#saveSettings').addEventListener('click',()=>{ alert('Settings saved (demo)'); });
+
+// create customer
+$('#addCustomerBtn').addEventListener('click',()=>{
+  const name = prompt('Customer name'); if(!name) return; demoCustomers.push({name,phone:'',type:'retail'}); renderCustomers();
+});
+
+// Export products simple CSV
+$('#exportProducts').addEventListener('click',()=>{
+  const csv = demoProducts.map(p=>`${p.sku},"${p.name}",${p.category},${p.stock},${p.price}`).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='products.csv'; a.click(); URL.revokeObjectURL(url);
+});
+
+// global search (very simple)
+$('#globalSearch').addEventListener('input',e=>{
+  const q = e.target.value.toLowerCase(); if(!q) return; const found = demoProducts.find(p=>p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)); if(found){ alert('Found product: '+found.name) }
+});
+
+// ===== Logout =====
+$('#logoutBtn').addEventListener('click',()=>{
+  window.location.href = 'landing.html';
+});
+
+</script>
+</body>
+</html>

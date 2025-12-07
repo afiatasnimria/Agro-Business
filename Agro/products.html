@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Agro Management — Products</title>
+  <style>
+    /* ----- Base ----- */
+    :root{
+      --green-700:#1b5e20; --green-600:#2e7d32; --green-400:#66bb6a; --muted:#6b7280;
+      --card-bg:#ffffff; --bg:#f5f9f6; --accent:#2e7d32;
+      --radius:12px; --glass: rgba(255,255,255,0.6);
+      font-family: Inter, Poppins, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#0f172a;min-height:100vh}
+
+    /* ----- Layout ----- */
+    .app{display:flex;min-height:100vh}
+    .sidebar{width:260px;background:linear-gradient(180deg,var(--green-700),var(--green-600));color:#fff;padding:28px 18px;display:flex;flex-direction:column}
+    .brand{font-weight:700;font-size:20px;letter-spacing:0.4px;margin-bottom:18px}
+    .nav{display:flex;flex-direction:column;gap:6px}
+    .nav a, .nav button{background:transparent;border:0;color:inherit;text-align:left;padding:12px;border-radius:10px;cursor:pointer;font-size:15px;text-decoration:none;display:block}
+    .nav a:hover, .nav button:hover{background:rgba(255,255,255,0.06)}
+    .nav a.active, .nav button.active{background:rgba(255,255,255,0.12)}
+    .logout-btn{color:#ff6b6b}
+    .logout-btn:hover{background:rgba(255,99,71,0.1); color:#ff4757}
+    .sidebar .spacer{flex:1}
+    .sidebar small{opacity:0.9}
+
+    .main{flex:1;padding:28px}
+    header.main-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .search{display:flex;gap:12px;align-items:center}
+    .search input{padding:10px 12px;border-radius:10px;border:1px solid #e6f0ea;background:white;min-width:300px}
+    .btn{background:var(--accent);color:white;padding:10px 16px;border-radius:10px;border:0;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--green-700);border:1px solid rgba(16,185,129,0.12)}
+
+    /* ----- Cards & grid ----- */
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .card{background:var(--card-bg);padding:18px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(12,17,15,0.06)}
+
+    /* ----- Tables ----- */
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px 10px;text-align:left;border-bottom:1px solid #eef3ee}
+    th{font-size:13px;color:var(--muted)}
+
+    /* ----- Forms ----- */
+    .form-row{display:flex;gap:12px}
+    .field{flex:1}
+    .field label{display:block;margin-bottom:4px;font-size:14px;color:var(--muted)}
+    .field input, .field select{width:100%;padding:10px;border-radius:8px;border:1px solid #e6f0ea}
+
+    /* ----- Modals ----- */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:1000}
+    .modal{background:white;padding:24px;border-radius:12px;max-width:500px;width:90%;box-shadow:0 20px 40px rgba(0,0,0,0.2)}
+    .modal h3{margin-top:0}
+    .modal .form-row{margin-top:12px}
+    .modal button{margin-top:12px}
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">Agro Management</div>
+
+      <nav class="nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="products.html" class="active">Products</a>
+        <a href="customers.html">Customers</a>
+        <a href="invoices.html">Invoices</a>
+        <a href="stock.html">Stock</a>
+        <a href="reports.html">Reports</a>
+        <a href="expenses.html">Expenses</a>
+        <a href="settings.html">Settings</a>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </nav>
+
+      <div class="spacer"></div>
+      <small>Logged in as <strong>Owner</strong></small>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <header class="main-header">
+        <div>
+          <h1 style="margin:0;font-size:20px">Products</h1>
+          <div class="small muted">Manage your product inventory</div>
+        </div>
+        <div class="top-actions">
+          <input placeholder="Search products..." id="globalSearch" />
+          <button class="btn" id="addProductBtn">+ Add Product</button>
+          <button class="btn ghost" id="exportProducts">Export</button>
+        </div>
+      </header>
+
+      <!-- PRODUCTS PAGE -->
+      <div class="card">
+        <table id="productsTable"><thead><tr><th>SKU</th><th>Name</th><th>Category</th><th>Stock</th><th>Price</th><th>Actions</th></tr></thead><tbody></tbody></table>
+      </div>
+
+      <!-- PRODUCT MODAL -->
+      <div id="productModal" class="modal-overlay" style="display:none">
+        <div class="modal">
+          <h3>Add/Edit Product</h3>
+          <div class="form-row">
+            <div class="field"><label>SKU</label><input id="p_sku"/></div>
+            <div class="field"><label>Name</label><input id="p_name"/></div>
+          </div>
+          <div class="form-row">
+            <div class="field"><label>Category</label><input id="p_category"/></div>
+            <div class="field"><label>Unit</label><select id="p_unit"><option>kg</option><option>liter</option><option>piece</option></select></div>
+          </div>
+          <div class="form-row">
+            <div class="field"><label>Stock</label><input id="p_stock" type="number"/></div>
+            <div class="field"><label>Price (৳)</label><input id="p_price" type="number"/></div>
+          </div>
+          <button class="btn" id="saveProduct">Save</button>
+          <button class="btn ghost" id="cancelProduct">Cancel</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+// ===== Demo data =====
+const demoProducts = [
+  {sku:'PST-001', name:'Alpha Insecticide 250ml', category:'Pesticide', stock:50, price:150},
+  {sku:'FRT-001', name:'GrowFast 2kg', category:'Fertilizer', stock:30, price:500},
+  {sku:'SD-001', name:'Hybrid Maize Pack', category:'Seeds', stock:200, price:120}
+];
+
+// ===== Helpers =====
+function $(s){return document.querySelector(s)}
+function $all(s){return Array.from(document.querySelectorAll(s))}
+
+// ===== Render functions =====
+function renderProducts(){
+  const tbody = $('#productsTable tbody'); tbody.innerHTML='';
+  demoProducts.forEach((p,idx)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${p.sku}</td><td>${p.name}</td><td>${p.category}</td><td>${p.stock}</td><td>৳ ${p.price}</td><td><button data-idx="${idx}" class="btn ghost">Edit</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ===== Init render =====
+renderProducts();
+
+// ===== Product modal =====
+$('#addProductBtn').addEventListener('click',()=>{ $('#productModal').style.display='flex'; });
+$('#cancelProduct').addEventListener('click',()=>{ $('#productModal').style.display='none'; });
+$('#saveProduct').addEventListener('click',()=>{
+  const sku = $('#p_sku').value.trim(); const name = $('#p_name').value.trim();
+  const category = $('#p_category').value.trim(); const unit = $('#p_unit').value; const stock = Number($('#p_stock').value)||0; const price = Number($('#p_price').value)||0;
+  if(!sku||!name){alert('SKU and name required');return}
+  demoProducts.push({sku,name,category,unit,stock,price}); renderProducts(); $('#productModal').style.display='none';
+  // clear
+  $('#p_sku').value=''; $('#p_name').value=''; $('#p_category').value=''; $('#p_stock').value=''; $('#p_price').value='';
+});
+
+// Export products simple CSV
+$('#exportProducts').addEventListener('click',()=>{
+  const csv = demoProducts.map(p=>`${p.sku},"${p.name}",${p.category},${p.stock},${p.price}`).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='products.csv'; a.click(); URL.revokeObjectURL(url);
+});
+
+// global search (very simple)
+$('#globalSearch').addEventListener('input',e=>{
+  const q = e.target.value.toLowerCase(); if(!q) return; const found = demoProducts.find(p=>p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)); if(found){ alert('Found product: '+found.name) }
+});
+
+// ===== Logout =====
+$('#logoutBtn').addEventListener('click',()=>{
+  window.location.href = 'landing.html';
+});
+  </script>
+</body>
+</html>
