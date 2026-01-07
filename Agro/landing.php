@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agro Business Management – Landing Page</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+      color: #333;
+      overflow-x: hidden;
+    }
+    header {
+      background: linear-gradient(135deg, #2e7d32 0%, #4caf50 50%, #66bb6a 100%);
+      padding: 100px 20px;
+      text-align: center;
+      color: white;
+      font-size: 52px;
+      letter-spacing: 2px;
+      font-weight: 800;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      animation: headerSlideIn 1s ease-out;
+    }
+    @keyframes headerSlideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Login button */
+    .login-btn {
+      background: rgba(255, 255, 255, 0.9);
+      color: #2e7d32;
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 18px;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      transition: all 0.4s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .login-btn:hover {
+      background: #ffffff;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      border-color: #4caf50;
+    }
+
+    /* Register button */
+    .register-btn {
+      background: rgba(255, 255, 255, 0.9);
+      color: #2e7d32;
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 18px;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      transition: all 0.4s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .register-btn:hover {
+      background: #ffffff;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      border-color: #4caf50;
+    }
+
+    /* Header buttons container */
+    .header-buttons {
+      position: absolute;
+      top: 30px;
+      right: 35px;
+      display: flex;
+      gap: 15px;
+    }
+
+    .tagline {
+      text-align: center;
+      font-size: 24px;
+      margin-top: -30px;
+      color: #e8f5e8;
+      font-weight: 400;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* Features */
+    .features-section {
+      padding: 60px 20px;
+      max-width: 1200px;
+      margin: auto;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .features-title {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 40px;
+      font-weight: 700;
+      color: #2e7d32;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+    .feature-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f1f8e9 100%);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      text-align: center;
+      font-size: 18px;
+      transition: all 0.4s ease;
+      border: 1px solid #e8f5e8;
+    }
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      background: linear-gradient(135deg, #ffffff 0%, #e8f5e8 100%);
+    }
+    .feature-card h3 {
+      color: #388e3c;
+      margin-bottom: 15px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    /* CTA */
+    .cta-section {
+      text-align: center;
+      margin: 80px 0;
+      animation: fadeInUp 1s ease-out 1s both;
+    }
+    .cta-btn {
+      background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+      padding: 18px 40px;
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-size: 22px;
+      font-weight: 700;
+      transition: all 0.4s ease;
+      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+      border: none;
+      cursor: pointer;
+    }
+    .cta-btn:hover {
+      background: linear-gradient(135deg, #388e3c 0%, #4caf50 100%);
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(76, 175, 80, 0.6);
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 60px;
+      font-size: 16px;
+      box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+    }
+
+    /* Login overlay */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+    .login-card {
+      width: 420px;
+      background: linear-gradient(135deg, #ffffff 0%, #f1f8e9 100%);
+      padding: 40px;
+      border-radius: 25px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: modalFadeIn 0.5s ease-out;
+      text-align: center;
+      border: 1px solid #e8f5e8;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.9) translateY(-20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .login-card h2 {
+      color: #2e7d32;
+      margin-bottom: 25px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .login-input {
+      width: 100%;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 15px;
+      border: 2px solid #e8f5e8;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+      background: #fafafa;
+    }
+    .login-input:focus {
+      outline: none;
+      border-color: #4caf50;
+      background: #ffffff;
+    }
+    .login-button {
+      width: 100%;
+      background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+      color: white;
+      padding: 15px;
+      border-radius: 15px;
+      border: none;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    }
+    .login-button:hover {
+      background: linear-gradient(135deg, #388e3c 0%, #4caf50 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    }
+    .cancel-btn {
+      margin-top: 15px;
+      cursor: pointer;
+      color: #2e7d32;
+      font-weight: 600;
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+    .cancel-btn:hover {
+      color: #4caf50;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    Agro Business Management
+    <div class="header-buttons">
+      <div class="register-btn" id="openRegister">Register</div>
+      <div class="login-btn" id="openLogin">Login</div>
+    </div>
+  </header>
+
+  <p class="tagline">Smart • Fast • Reliable — Grow Your Agro Business With Confidence</p>
+
+  <!-- FEATURES -->
+  <section class="features-section">
+    <h2 class="features-title">What We Offer</h2>
+    <div class="features">
+      <div class="feature-card"><h3>📦 Product Management</h3><p>Add, track, and manage all agro products.</p></div>
+      <div class="feature-card"><h3>🧾 Smart Invoice</h3><p>Create professional invoices instantly.</p></div>
+      <div class="feature-card"><h3>👥 Customer Tracking</h3><p>Full customer history & due tracking.</p></div>
+      <div class="feature-card"><h3>📊 Dashboard</h3><p>Real-time analytics & performance charts.</p></div>
+      <div class="feature-card"><h3>📉 Stock Monitoring</h3><p>Auto-update stock + low stock alerts.</p></div>
+      <div class="feature-card"><h3>🌐 Multi-User Access</h3><p>Admin & Staff secure login system.</p></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <button class="cta-btn" onclick="alert('Please register or login first.')">Get Started</button>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    © 2025 Agro Business Management System — All Rights Reserved
+  </footer>
+
+  <!-- LOGIN OVERLAY -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <h2>Login</h2>
+      <input class="login-input" id="email" type="email" placeholder="Email">
+      <input class="login-input" id="password" type="password" placeholder="Password">
+      <button class="login-button" id="loginNow">Login</button>
+      <div class="cancel-btn" id="closeLogin">Cancel</div>
+    </div>
+  </div>
+
+  <!-- REGISTER OVERLAY -->
+  <div class="login-overlay" id="registerOverlay">
+    <div class="login-card">
+      <h2>Register</h2>
+      <input class="login-input" id="regFullName" type="text" placeholder="Full Name" required>
+      <input class="login-input" id="regEmail" type="email" placeholder="Email" required>
+      <input class="login-input" id="regPhone" type="text" placeholder="Phone">
+      <input class="login-input" id="regPassword" type="password" placeholder="Password" required>
+      <input class="login-input" id="regConfirmPassword" type="password" placeholder="Confirm Password" required>
+      <button class="login-button" id="registerNow">Register</button>
+      <div class="cancel-btn" id="closeRegister">Cancel</div>
+    </div>
+  </div>
+
+  <script>
+    // OPEN LOGIN
+    document.getElementById("openLogin").onclick = function () {
+      document.getElementById("loginOverlay").style.display = "flex";
+    };
+
+    // CLOSE LOGIN
+    document.getElementById("closeLogin").onclick = function () {
+      document.getElementById("loginOverlay").style.display = "none";
+    };
+
+    // LOGIN ACTION
+    document.getElementById("loginNow").onclick = async function () {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await fetch('auth.php', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'login', email, password })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert('Login successful');
+          // session cookie is now set by server; navigate to dashboard
+          window.location.href = 'dashboard.php';
+        } else {
+          alert(result.message);
+        }
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    };
+
+    // OPEN REGISTER
+    document.getElementById("openRegister").onclick = function () {
+      document.getElementById("registerOverlay").style.display = "flex";
+    };
+
+    // CLOSE REGISTER
+    document.getElementById("closeRegister").onclick = function () {
+      document.getElementById("registerOverlay").style.display = "none";
+    };
+
+    // REGISTER ACTION
+    document.getElementById("registerNow").onclick = async function () {
+      const full_name = document.getElementById("regFullName").value;
+      const email = document.getElementById("regEmail").value;
+      const phone = document.getElementById("regPhone").value;
+      const password = document.getElementById("regPassword").value;
+      const confirmPassword = document.getElementById("regConfirmPassword").value;
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match");
+        return;
+      }
+
+      try {
+        const response = await fetch('auth.php', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'register', full_name, email, phone, password })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          // After successful registration, redirect to the login view
+          // so the user can login (preserves usual flow).
+          window.location.href = 'landing.php?registered=1';
+        } else {
+          alert(result.message);
+        }
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    };
+
+    // If redirected after registration, open the login overlay automatically
+    (function() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('registered') === '1') {
+          // show login overlay and notify user
+          document.getElementById("loginOverlay").style.display = "flex";
+          alert('Registration successful. Please login.');
+          // remove query param from URL without reloading
+          if (window.history && window.history.replaceState) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('registered');
+            window.history.replaceState({}, document.title, url.toString());
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+    })();
+  </script>
+
+</body>
+</html>
